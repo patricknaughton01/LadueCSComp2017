@@ -6,7 +6,7 @@ public class heights {
 			Arrays.asList(new String[] {"SE", "J", "SO", "F"}));
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException{
-		BufferedReader r = new BufferedReader(new FileReader("heights.in"));
+		BufferedReader r = new BufferedReader(new FileReader("heightssample3.in"));
 		ArrayList<Pair> students = new ArrayList<Pair>();
 		for(int i = 0; i<1000000; i++){
 			String[] t = r.readLine().trim().split(" ");
@@ -14,7 +14,9 @@ public class heights {
 		}
 		students = sortStr(students);
 		students = sortInt(students);
-		System.out.println(students);
+		for(int i =0; i<1000000; i++){
+			System.out.println(students.get(i));
+		}
 		r.close();
 
 	}
@@ -106,6 +108,6 @@ class Pair<I,S> {
 	           this.str.equals(pairo.getS());
 	  }
 	  public String toString(){
-		  return ("[" + this.integer.toString() + ", " + this.str + "]");
+		  return (this.integer.toString() + " " + this.str);
 	  }
 }
