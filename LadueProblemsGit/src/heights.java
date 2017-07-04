@@ -6,7 +6,7 @@ public class heights {
 			Arrays.asList(new String[] {"SE", "J", "SO", "F"}));
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException{
-		BufferedReader r = new BufferedReader(new FileReader("heightssample3.in"));
+		BufferedReader r = new BufferedReader(new FileReader("heights.in"));
 		ArrayList<Pair> students = new ArrayList<Pair>();
 		for(int i = 0; i<1000000; i++){
 			String[] t = r.readLine().trim().split(" ");
