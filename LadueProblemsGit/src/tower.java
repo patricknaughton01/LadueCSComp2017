@@ -7,6 +7,7 @@ public class tower {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException{
 		BufferedReader r = new BufferedReader(new FileReader("tower.in"));
+		BufferedWriter w = new BufferedWriter(new FileWriter("tower.out"));
 		int numSets = Integer.valueOf(r.readLine().trim());
 		for(int i = 0; i<numSets; i++){
 			ArrayList<Point2D> ps = new ArrayList<Point2D>();
@@ -21,10 +22,11 @@ public class tower {
 			centroid = getCentroid();
 			centroidRadius = centroid.distanceTo(getFarthestFrom(centroid));
 			Circle c = getSmallestCircle();
-			System.out.println(roundToThreePlaces(c.getX())
+			w.write(roundToThreePlaces(c.getX())
 					+ " " + roundToThreePlaces(c.getY()) + " " + 
-					roundToThreePlaces(c.getR()));
+					roundToThreePlaces(c.getR())+"\n");
 		}
+		w.close();
 		r.close();
 
 	}

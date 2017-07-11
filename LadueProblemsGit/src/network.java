@@ -6,6 +6,7 @@ public class network {
 	public static void main(String[] args) throws IOException{
 		BufferedReader r = new BufferedReader(new FileReader("network.in"));
 		int sets = Integer.valueOf(r.readLine().trim());
+		BufferedWriter w = new BufferedWriter(new FileWriter("network.out"));
 		for(int i = 0; i<sets; i++){
 			int numEdges = Integer.valueOf(r.readLine().trim());
 			ArrayList<String[]> edges = new ArrayList<String[]>();
@@ -16,7 +17,7 @@ public class network {
 			g.findCutNodes();
 			//System.err.println(g.cutNodes);
 			if(g.cutNodes.size()==0){
-				System.out.println("0");
+				w.write("0\n");
 			}else{
 				int newEdges = 0;
 				for(int j = 0; j<g.cutNodes.size(); j++){
@@ -36,9 +37,10 @@ public class network {
 						unreach = c.getUnreachableNodes(c.nodes.get(0));
 					}
 				}
-				System.out.println(newEdges);
+				w.write(newEdges + "\n");
 			}
 		}
+		w.close();
 		r.close();
 	}
 
