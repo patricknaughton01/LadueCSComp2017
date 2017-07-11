@@ -6,7 +6,7 @@ public class tower {
 	public static double centroidRadius = 0;
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException{
-		BufferedReader r = new BufferedReader(new FileReader("towersample3.in"));
+		BufferedReader r = new BufferedReader(new FileReader("tower.in"));
 		int numSets = Integer.valueOf(r.readLine().trim());
 		for(int i = 0; i<numSets; i++){
 			ArrayList<Point2D> ps = new ArrayList<Point2D>();
@@ -64,7 +64,7 @@ public class tower {
     	}
     	Circle smallest = new Circle(centroid.x(), centroid.y(), centroidRadius);
     	Point2D outer = getFarthestFrom(centroid);
-    	double changeRate = 0.000001;
+    	double changeRate = 0.0001;
     	Point2D mid;
     	Point2D center = new Point2D(0, 0);
     	while((mid = allIn(smallest))==null){
@@ -75,8 +75,8 @@ public class tower {
     	}
     	Point2D midpoint = new Point2D((mid.x()+outer.x())/2, (mid.y()+outer.y())/2);
     	smallest = new Circle(center.x(), center.y(), mid.distanceTo(center));
-    	changeRate = 0.01;
-    	double threshold = 0.000000000001;
+    	changeRate = 0.0001;
+    	double threshold = 0.0001;
     	while(allIn(smallest)==null){
     		double dX = (midpoint.x()-smallest.getX())*changeRate;
     		double dY = (midpoint.y()-smallest.getY())*changeRate;
