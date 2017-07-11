@@ -8,6 +8,7 @@ public class heights {
 	public static void main(String[] args) throws IOException{
 		BufferedReader r = new BufferedReader(new FileReader("heights.in"));
 		ArrayList<Pair> students = new ArrayList<Pair>();
+		BufferedWriter w = new BufferedWriter(new FileWriter("heights.out"));
 		for(int i = 0; i<1000000; i++){
 			String[] t = r.readLine().trim().split(" ");
 			students.add(new Pair(Integer.valueOf(t[0]), t[1]));
@@ -15,8 +16,9 @@ public class heights {
 		students = sortStr(students);
 		students = sortInt(students);
 		for(int i =0; i<1000000; i++){
-			System.out.println(students.get(i));
+			w.write(students.get(i) + "\n");
 		}
+		w.close();
 		r.close();
 
 	}

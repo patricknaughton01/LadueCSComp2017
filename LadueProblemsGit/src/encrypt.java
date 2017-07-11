@@ -7,11 +7,13 @@ public class encrypt {
 	public static void main(String[] args) throws IOException{
 		BufferedReader r = new BufferedReader(new FileReader("encrypt.in"));
 		int msgs = Integer.valueOf(r.readLine());
+		BufferedWriter w = new BufferedWriter(new FileWriter("encrypt.out"));
 		for(int i = 0; i<msgs; i++){
 			int shift = Integer.valueOf(r.readLine());
 			String m = r.readLine().trim();
-			System.out.println(shift(shift+26, m));
+			w.write(shift(shift+26, m) + "\n");
 		}
+		w.close();
 		r.close();
 	}
 	
