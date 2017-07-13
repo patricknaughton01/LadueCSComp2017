@@ -7,7 +7,7 @@ public class perm {
 				Arrays.asList(r.readLine().trim().split(" ")));
 		r.close();
 		ArrayList<ArrayList<String>> ps = perms(list);
-		BufferedWriter w = new BufferedWriter(new FileWriter("perm.ans"));
+		BufferedWriter w = new BufferedWriter(new FileWriter("perm.out"));
 		for(ArrayList<String> a:ps){
 			w.write(a.toString().substring(1, a.toString().length()-1) + "\n");
 		}
