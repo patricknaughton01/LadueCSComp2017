@@ -16,6 +16,7 @@ public class factors {
 			}
 		}
 		int numNums = Integer.valueOf(r.readLine().trim());
+		BufferedWriter w = new BufferedWriter(new FileWriter("factors.out"));
 		for(int i = 0; i<numNums; i++){
 			int divs = 0;
 			int num = Integer.valueOf(r.readLine().trim());
@@ -28,8 +29,9 @@ public class factors {
 					j = ps.size();
 				}
 			}
-			System.out.println(divs);
+			w.write(divs + "\n");
 		}
+		w.close();
 		r.close();
 	}
 
