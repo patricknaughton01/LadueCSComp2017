@@ -3,7 +3,12 @@ import java.util.*;
 
 public class grammar {
 	public static ArrayList<String> dictionary = new ArrayList<String>();
+	public static String[] apoSuff = {"\'ve", "\'s", 
+		"\'d", "\'m", "s\'", "\n't", "\'ll"};
+	public static String[] puncLiterals = {"Dr.", "Mr.", 
+		"Mrs.", "Ms.", "i.e.", "e.g.", "etc."};
 	public static void main(String[] args) throws IOException{
+		//System.err.println(Arrays.toString(apostrophes));
 		ArrayList<String> essays = new ArrayList<String>();
 		
 		BufferedReader r = new BufferedReader(new FileReader("grammar.in"));
@@ -17,9 +22,9 @@ public class grammar {
 		}
 		r.close();
 		/*ArrayList<String> test = new ArrayList<String>( //binary function tester
-				Arrays.asList(new String[] {"a", "aa", "aaa", "aaaa", "aaaaa"}));
-		System.err.println(binSearch(test, "aaaaa", 0, test.size()));*/
-		String[] puncLiterals = {"Dr.", "Mr.", "Mrs.", "Ms.", "i.e.", "e.g.", "etc."};
+				Arrays.asList(new String[] {"a", "aa", "aaa", "aaaa", "aaaaa", "b", "c"}));
+		System.err.println(binSearch(test, "c", 0, test.size()));*/
+		
 		for(int i = 0, n = essays.size(); i<n; i++){
 			ArrayList<int[]> flags = new ArrayList<int[]>();
 			for(int j = 0, m = puncLiterals.length; j<m; j++){
@@ -46,15 +51,46 @@ public class grammar {
 			}
 			//System.err.println(sentences);
 			for(int j = 0; j<sentences.size(); j++){
+				System.out.println(sentences.get(j));
 				Pair1<Integer, String> caps = checkCaps(sentences.get(j));
 				sentences.set(j, caps.getS());
 				//System.err.println(caps.getI());
 				//System.err.println(caps.getS());
 				int spelling = checkSpelling(sentences.get(j));
-				System.err.println(sentences.get(j));
-				System.err.println(spelling);
+				//System.err.println(sentences.get(j));
+				//System.err.println(spelling);
+				int apo = checkApo(sentences.get(j));
+				System.out.println(apo+spelling+caps.getI());
 			}
 		}
+	}
+	
+	public static int checkApo(String sentence){
+		int mistakes = 0;
+		String[] words = sentence.split(" ");
+		for(int i = 0; i<words.length; i++){
+			int ind;
+			if(words[i].contains("\'")){
+				if((ind = apoSuffInd(words[i]))!=-1){
+					if(binSearch(dictionary, 
+							words[i].substring(0, ind), 0, dictionary.size())==-1){
+						mistakes++;
+					}
+				}else{
+					mistakes++;
+				}
+			}
+		}
+		return(mistakes);
+	}
+	
+	public static int apoSuffInd(String word){
+		for(int i = 0; i<apoSuff.length; i++){
+			int ind;
+			if((ind = word.indexOf(apoSuff[i]))!=-1){
+				return(ind);
+			}
+		}return(-1);
 	}
 	
 	public static int checkSpelling(String sentence){
@@ -64,7 +100,8 @@ public class grammar {
 			if(sentence.charAt(i)==' '){
 				String word = sentence.substring(start, i);
 				if(Character.isLowerCase(word.charAt(0)) &&
-						!hasChar(word, '\'')){
+						!hasChar(word, '\'') && 
+						binSearch(puncLiterals, word, 0, puncLiterals.length)==-1){
 					if(binSearch(dictionary, word, 
 							0, dictionary.size())==-1){
 						mistakes++;
@@ -106,12 +143,35 @@ public class grammar {
 		return(new Pair1<Integer, String>(mistakes, workingSentence));
 	}
 	
+	public static int binSearch(String[] arr, String targ, int start, int end){
+		if(start>end){
+			return(-1);
+		}else{
+			int mid = (start+end)/2;
+			if(mid>arr.length-1 || mid<0){
+				return(-1);
+			}
+			else if(arr[mid].equals(targ)){
+				return(mid);
+			}else{
+				if(targ.compareTo(arr[mid])<0){
+					return(binSearch(arr, targ, start, mid-1));
+				}else{
+					return(binSearch(arr, targ, mid+1, end));
+				}
+			}
+		}
+	}
+	
 	public static int binSearch(ArrayList<String> arr, String targ, int start, int end){
 		if(start>end){
 			return(-1);
 		}else{
 			int mid = (start+end)/2;
-			if(arr.get(mid).equals(targ)){
+			if(mid>arr.size()-1 || mid<0){
+				return(-1);
+			}
+			else if(arr.get(mid).equals(targ)){
 				return(mid);
 			}else{
 				if(targ.compareTo(arr.get(mid))<0){
