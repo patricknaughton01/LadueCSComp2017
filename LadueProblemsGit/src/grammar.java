@@ -127,6 +127,7 @@ public class grammar {
 		System.err.println(binSearch(test, "c", 0, test.size()));*/
 		/*System.err.println(Arrays.toString(
 				trimPunc(new String[]{"it's", "can't,", ";asdf"})));*/
+		BufferedWriter w = new BufferedWriter(new FileWriter("grammar.out"));
 		for(int i = 0, n = essays.size(); i<n; i++){
 			ArrayList<int[]> flags = new ArrayList<int[]>();
 			for(int j = 0, m = puncLiterals.length; j<m; j++){
@@ -138,11 +139,29 @@ public class grammar {
 				} //flags are the start of the literal followed by one index after the literal
 				//"I am a Dr." gets the flag [7, 10]
 			}
+			ArrayList<int[]> quoteFlags = new ArrayList<int[]>();
+			//these flags contain the indicies of quotation marks
+			int[] pair = {0,0};
+			int activeInd = 0;
+			for(int j = 0; j<essays.get(i).length(); j++){
+				if(essays.get(i).substring(j, j+1).equals("\"")){
+					if(activeInd == 0){
+						pair[activeInd] = j;
+						activeInd++;
+					}else{
+						pair[1] = j;
+						activeInd = 0;
+						//System.err.println(Arrays.toString(pair));
+						quoteFlags.add(pair);
+						pair = new int[2];
+					}
+				}
+			}
 			ArrayList<String> sentences = new ArrayList<String>();
 			//Each entry will not contain the punctuation that caused the split
 			int start = 0;
 			for(int j = 0; j<essays.get(i).length(); j++){
-				if(!flagged(flags, j)){
+				if(!flagged(flags, j) && !quoteFlagged(quoteFlags, j)){
 					if(essays.get(i).substring(j, j+1).equals(".")||
 							essays.get(i).substring(j, j+1).equals("?")||
 							essays.get(i).substring(j, j+1).equals("!")){
@@ -152,20 +171,23 @@ public class grammar {
 				}
 			}
 			//System.err.println(sentences);
+			int count = 0;
 			for(int j = 0; j<sentences.size(); j++){
-				System.out.println(sentences.get(j));
+				//System.out.println(sentences.get(j));
 				Pair1<Integer, String> caps = checkCaps(sentences.get(j));
 				sentences.set(j, caps.getS());
-				System.out.println(sentences.get(j));
+				//System.out.println(sentences.get(j));
 				//System.err.println(caps.getI());
 				//System.err.println(caps.getS());
 				int spelling = checkSpelling(sentences.get(j));
 				//System.err.println(sentences.get(j));
 				//System.err.println(spelling);
 				int apo = checkApo(sentences.get(j));
-				System.out.println(spelling + apo + caps.getI());
+				count += spelling + apo + caps.getI();
 			}
+			w.write(Integer.toString(count) + "\n");
 		}
+		w.close();
 	}
 	
 	public static int checkApo(String sentence){
@@ -253,7 +275,7 @@ public class grammar {
 		int mistakes = 0;
 		for(int i = 0; i<sentence.length(); i++){
 			if(sentence.charAt(i)==' '){
-				String word = trimPunc(sentence.substring(start, i));
+				String word = trimPunc(sentence.substring(start, i)).trim();
 				if(Character.isLowerCase(word.charAt(0)) &&
 						!hasChar(word, '\'') && 
 						binSearch(puncLiterals, word, 0, puncLiterals.length)==-1){
@@ -270,12 +292,13 @@ public class grammar {
 	}
 	
 	public static Pair1<Integer,String> checkCaps(String sentence){
-		String workingSentence = removePunc(sentence);
+		String workingSentence = removePunc(sentence).trim();
+		//System.err.println("working: " + workingSentence);
 		int mistakes = 0;
 		if(workingSentence.length()>0){
 			if(Character.isLowerCase(workingSentence.charAt(0))){
 				mistakes++;
-				System.err.println(sentence);
+				System.err.println(workingSentence);
 			}else{
 				workingSentence = Character.toLowerCase(workingSentence.charAt(0)) + 
 						workingSentence.substring(1);
@@ -283,12 +306,12 @@ public class grammar {
 			for(int i = 1; i<workingSentence.length(); i++){
 				if(Character.isUpperCase(workingSentence.charAt(i))){
 					if(!(workingSentence.charAt(i-1)==' ')){
-						System.err.println(sentence);
+						System.err.println(workingSentence);
 						mistakes++;
 						if(i<workingSentence.length()-1){
 							workingSentence = workingSentence.substring(0,i) +
-									Character.toLowerCase(sentence.charAt(i))+
-									workingSentence.substring(i);
+									Character.toLowerCase(workingSentence.charAt(i))+
+									workingSentence.substring(i+1);
 						}else{
 							workingSentence = workingSentence.substring(0,i) +
 									Character.toLowerCase(workingSentence.charAt(i));
@@ -347,6 +370,14 @@ public class grammar {
 			}
 		}
 		return(false);
+	}
+	
+	public static boolean quoteFlagged(ArrayList<int[]> qFlags, int ind){
+		for(int i = 0; i<qFlags.size(); i++){
+			if(ind == qFlags.get(i)[1]-1){
+				return(true);
+			}
+		}return(false);
 	}
 	
 	public static boolean flagged(ArrayList<int[]> flags, int ind){
