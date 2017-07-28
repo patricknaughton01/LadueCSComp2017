@@ -107,26 +107,18 @@ public class grammar {
 	public static String[] puncLiterals = {"Dr.", "Mr.", 
 		"Mrs.", "Ms.", "i.e.", "e.g.", "etc."};
 	public static void main(String[] args) throws IOException{
-		//System.err.println(Arrays.toString(apostrophes));
 		ArrayList<String> essays = new ArrayList<String>();
 		
 		BufferedReader r = new BufferedReader(new FileReader("grammar.in"));
 		for(int i = 0; i<370101; i++){
 			dictionary.add(r.readLine().trim());
 		}
-		//System.out.println(dictionary.indexOf("i"));
 		dictionary.add(145454, "I");
-		//System.out.println(dictionary);
 		int numEssays = Integer.valueOf(r.readLine().trim());
 		for(int i = 0; i<numEssays; i++){
 			essays.add(r.readLine());
 		}
 		r.close();
-		/*ArrayList<String> test = new ArrayList<String>( //binary function tester
-				Arrays.asList(new String[] {"a", "aa", "aaa", "aaaa", "aaaaa", "b", "c"}));
-		System.err.println(binSearch(test, "c", 0, test.size()));*/
-		/*System.err.println(Arrays.toString(
-				trimPunc(new String[]{"it's", "can't,", ";asdf"})));*/
 		BufferedWriter w = new BufferedWriter(new FileWriter("grammar.out"));
 		for(int i = 0, n = essays.size(); i<n; i++){
 			ArrayList<int[]> flags = new ArrayList<int[]>();
@@ -151,7 +143,6 @@ public class grammar {
 					}else{
 						pair[1] = j;
 						activeInd = 0;
-						//System.err.println(Arrays.toString(pair));
 						quoteFlags.add(pair);
 						pair = new int[2];
 					}
@@ -161,7 +152,7 @@ public class grammar {
 			//Each entry will not contain the punctuation that caused the split
 			int start = 0;
 			for(int j = 0; j<essays.get(i).length(); j++){
-				if(!flagged(flags, j) && !quoteFlagged(quoteFlags, j)){
+				if(!flagged(flags, j) && !quoteFlagged(quoteFlags, j, essays.get(i))){
 					if(essays.get(i).substring(j, j+1).equals(".")||
 							essays.get(i).substring(j, j+1).equals("?")||
 							essays.get(i).substring(j, j+1).equals("!")){
@@ -173,15 +164,9 @@ public class grammar {
 			//System.err.println(sentences);
 			int count = 0;
 			for(int j = 0; j<sentences.size(); j++){
-				//System.out.println(sentences.get(j));
 				Pair1<Integer, String> caps = checkCaps(sentences.get(j));
 				sentences.set(j, caps.getS());
-				//System.out.println(sentences.get(j));
-				//System.err.println(caps.getI());
-				//System.err.println(caps.getS());
 				int spelling = checkSpelling(sentences.get(j));
-				//System.err.println(sentences.get(j));
-				//System.err.println(spelling);
 				int apo = checkApo(sentences.get(j));
 				count += spelling + apo + caps.getI();
 			}
@@ -195,18 +180,18 @@ public class grammar {
 		String[] words = removePunc(sentence.split(" "));
 		for(int i = 0; i<words.length; i++){
 			int ind;
-			if(words[i].contains("\'")){
+			if(words[i].contains("\'") && Character.isLowerCase(words[i].charAt(0))){
 				if(!contractions.contains(words[i])){
 					if((ind = apoSuffInd(words[i]))!=-1 && ind==words[i].length()){
 						if(binSearch(dictionary, 
-								words[i].substring(0, ind), 0, dictionary.size())==-1
+								words[i].substring(0, ind-2), 0, dictionary.size())==-1
 								&& Character.isLowerCase(words[i].charAt(0))){
 							System.err.println(words[i]);
 							mistakes++;
 						}
 					}else{
 						mistakes++;
-						System.err.println(words[i]);
+						//System.err.println(words[i]);
 					}
 				}
 			}
@@ -372,10 +357,20 @@ public class grammar {
 		return(false);
 	}
 	
-	public static boolean quoteFlagged(ArrayList<int[]> qFlags, int ind){
+	public static boolean quoteFlagged(ArrayList<int[]> qFlags, int ind, String ess){
 		for(int i = 0; i<qFlags.size(); i++){
 			if(ind == qFlags.get(i)[1]-1){
-				return(true);
+				if(ess.length()>qFlags.get(i)[1]+1){
+					if(ess.length()>qFlags.get(i)[1]+2){
+						if(Character.isUpperCase(ess.charAt(qFlags.get(i)[1]+2))){
+							return(false);
+						}else{
+							return(true);
+						}
+					}
+				}else{
+					return(false);
+				}
 			}
 		}return(false);
 	}
