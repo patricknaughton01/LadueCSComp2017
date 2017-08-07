@@ -108,7 +108,7 @@ public class grammar {
 		"Mrs.", "Ms.", "i.e.", "e.g.", "etc."};
 	public static void main(String[] args) throws IOException{
 		ArrayList<String> essays = new ArrayList<String>();
-		
+		System.out.println(apoSuffInd("'em"));
 		BufferedReader r = new BufferedReader(new FileReader("grammar.in"));
 		for(int i = 0; i<370101; i++){
 			dictionary.add(r.readLine().trim());
@@ -178,11 +178,12 @@ public class grammar {
 	public static int checkApo(String sentence){
 		int mistakes = 0;
 		String[] words = removePunc(sentence.split(" "));
+		System.err.println(Arrays.toString(words));
 		for(int i = 0; i<words.length; i++){
 			int ind;
 			if(words[i].contains("\'") && Character.isLowerCase(words[i].charAt(0))){
 				if(!contractions.contains(words[i])){
-					if((ind = apoSuffInd(words[i]))!=-1 && ind==words[i].length()){
+					if((ind = apoSuffInd(words[i]))==words[i].length()){
 						if(binSearch(dictionary, 
 								words[i].substring(0, ind-2), 0, dictionary.size())==-1
 								&& Character.isLowerCase(words[i].charAt(0))){
@@ -191,7 +192,7 @@ public class grammar {
 						}
 					}else{
 						mistakes++;
-						//System.err.println(words[i]);
+						System.err.println(words[i]);
 					}
 				}
 			}
